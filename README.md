@@ -95,6 +95,10 @@ Source documentation [here](https://www.digitalocean.com/community/tutorials/so-
 
 [Continuous Integration (CI)](https://en.wikipedia.org/wiki/Continuous_integration) and [Continuous Delivery (CD)](https://en.wikipedia.org/wiki/Continuous_delivery) of own websites and webapis happens through [GitHub](https://github.com/), [DockerHub](https://hub.docker.com/). Pull of docker image happens with [deployment script](#deployment) on Server.
 
+Following diagram shows final CI/CD setup:
+
+![alternative text](http://www.plantuml.com/plantuml/png/PS_1IWGn30RWUv_YFmaUnWSOHFQme7Vn0JBJw5RRT4dIbNbxBHramDjV-lrjSZ8dzLPoeDMhuimtplNA6luIfYSy9tzfounhiujXhP7X5OMIO56IzHA6wFPSro_Mpl5UzPiqZaOO5__LqbBU3UvWNfKDgT37iV8uuPNrnjg7oDd0ltb3ITASTpt0aIOnfwuxwAzha_wJE2LXtPT-CzP3kHzdi7pMpM2DOfA7o9Yd-t1YYQta7m00)
+
 ### GitHub
 
 GitHub account [suadin](https://github.com/suadin) contains following relevant [GIT](https://en.wikipedia.org/wiki/Git) repositories:
