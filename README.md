@@ -126,28 +126,41 @@ Deployment based on following idea:
 #!/bin/bash
 repo="<repo-name>"
 feed="<dockerhub-id>/$repo"
+ports="-p 80:80 -p 443:443"
 while [ true ]
 do
+  sleep 1
+  docker container prune -f
+  docker image prune -a -f
+  sleep 1
+  container_id=$(docker ps -aqf "name=$repo" -aqf "status=running")
   pull=$(docker pull $feed)
   if [[ $pull == *"Status: Image is up to date for $feed:latest"* ]]; then
-    echo "Nothing to do..."
+    if [ ! -z "$container_id" ]; then
+      echo "Nothing to do..."
+    else
+      # duplicated code, see below. For now ok but potential improvement exists.
+      echo "start container with image $feed"
+      screen -d -m bash -c "docker run $ports --name $repo $feed"
+    fi
+    sleep 60
   elif [[ $pull == *"Downloaded newer image for $feed:latest"* ]]; then
     echo "New version detected!"
-    container_id=$(docker ps -aqf "name=$repo")
     if [ ! -z "$container_id" ]; then
       echo "stop container $container_id"
       docker container stop "$container_id"
       sleep 1
       docker container prune -f
       docker image prune -a -f
-      sleep 3
+      sleep 1
     fi
     echo "start container with image $feed"
-    screen -d -m bash -c "docker run -p 80:80 --name $repo $feed"
+    screen -d -m bash -c "docker run $ports --name $repo $feed"
+    sleep 60
   else
     echo "Script doesn't work like expected, please verify!"
+    sleep 5
   fi
-  sleep 60
 done
 ```
 
