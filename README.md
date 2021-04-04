@@ -16,8 +16,6 @@ Domain [suadin.de](http://suadin.de) and Server [81.169.247.92]() are currently 
 
 First step documented [here](https://www.strato.de/faq/domains/welche-einstellungen-kann-ich-im-konfigurationsdialog-a-record-vornehmen/) (found only german version), add on DNS properties of Domain the Server IP as [A-Record](https://simple.wikipedia.org/wiki/A_record). Second step documented [here](https://www.strato.com/faq/en_us/product/this-is-how-you-can-set-a-custom-dns-reverse-for-your-ip-addresses/), add on Server the Domain as [DNS-Reverse](https://en.wikipedia.org/wiki/Reverse_DNS_lookup). First step is required to do second step successfully.
 
-> :warning: **SSL**: DNS properies could have unexpected impact on HTTPS availability. Need more research to check this.
-
 ## Server Setup
 
 Server has as Operating System (OS) **Ubuntu 18.04 LTS 64bit**. Setup manually, used scripts attached.
@@ -91,6 +89,35 @@ Source documentation [here](https://www.digitalocean.com/community/tutorials/so-
 10. screen -d -m bash -c "docker run -p 8080:80 docker/getting-started"
     * check [suadin.de:8080](http://suadin.de:8080) shows getting started website for docker
 
+### SSL
+Source documentations: [docker](https://thomasbandt.com/running-aspnetcore-with-https-in-a-docker-container), [snapd/certbot](https://certbot.eff.org/lets-encrypt/ubuntubionic-other), [pfx](https://www.ssl.com/how-to/create-a-pfx-p12-certificate-file-using-openssl/)
+1. sudo apt install snapd
+2. sudo apt install fuse
+3. sudo snap install core; sudo snap refresh core
+4. sudo apt-get remove certbot
+5. sudo snap install --classic certbot
+6. sudo ln -s /snap/bin/certbot /usr/bin/certbot
+7. sudo certbot certonly --webroot
+   * Email address: ***
+   * Read Terms of Service: Yes
+   * Share Email address: NO
+   * Domain names: suadin.de, www.suadin.de
+   * Choose webroot: doesn't now, cancel throws error, therefore in step 8 & 9 I try alternative to --webroot
+8. stop webserver
+   * sudo su docker
+   * stop suto-deployment: screen -ls, screen -r <screen-id>, Ctrl+A, K, Y
+   * stop container: docker container ls, docker container stop <container-id>
+   * exit
+9. sudo certbot certonly --standalone, enter domain, expect "Congratulations!"
+   * /etc/letsencrypt/live/suadin.de/fullchain.pem
+   * /etc/letsencrypt/live/suadin.de/privkey.pem
+10. sudo openssl pkcs12 -export -out suadin.de.pfx -inkey /etc/letsencrypt/live/suadin.de/privkey.pem -in /etc/letsencrypt/live/suadin.de/fullchain.pem
+    * choose export password
+11. prepare *.pfx for docker usage
+    * sudo mkdir /home/docker/.aspnet
+    * sudo mkdir /home/docker/.aspnet/https
+    * sudo cp suadin.de.pfx /home/docker/.aspnet/https/
+
 ## CI/CD Setup
 
 [Continuous Integration (CI)](https://en.wikipedia.org/wiki/Continuous_integration) and [Continuous Delivery (CD)](https://en.wikipedia.org/wiki/Continuous_delivery) of own websites and webapis happens through [GitHub](https://github.com/), [DockerHub](https://hub.docker.com/). Pull of docker image happens with [deployment script](#deployment) on Server.
@@ -126,7 +153,7 @@ Deployment based on following idea:
 #!/bin/bash
 repo="<repo-name>"
 feed="<dockerhub-id>/$repo"
-ports="-p 80:80 -p 443:443"
+docker_params="-p 80:80 -p 443:443 -e ASPNETCORE_URLS=\"https://+443;http://+80\" -e ASPNETCORE_HTTPS_PORT=443 -e ASPNETCORE_Kestrel__Certificates__Default__Password=\"$cert_password\" -e ASPNETCORE_Kestrel__Certificates__Default__Path=/https/suadin.de.pfx -v ~/.aspnet/https:/https/"
 while [ true ]
 do
   sleep 1
@@ -141,7 +168,7 @@ do
     else
       # duplicated code, see below. For now ok but potential improvement exists.
       echo "start container with image $feed"
-      screen -d -m bash -c "docker run $ports --name $repo $feed"
+      screen -d -m bash -c "docker run $docker_params --name $repo $feed"
     fi
     sleep 60
   elif [[ $pull == *"Downloaded newer image for $feed:latest"* ]]; then
@@ -155,7 +182,7 @@ do
       sleep 1
     fi
     echo "start container with image $feed"
-    screen -d -m bash -c "docker run $ports --name $repo $feed"
+    screen -d -m bash -c "docker run $docker_params --name $repo $feed"
     sleep 60
   else
     echo "Script doesn't work like expected, please verify!"
