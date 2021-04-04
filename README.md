@@ -1,14 +1,18 @@
 # Table of Contents
 
-1. [Domain Setup](#domain-setup) 
-2. [Server Setup](#server-setup)
+1. [Introduction](#introduction)
+2. [Domain Setup](#domain-setup) 
+3. [Server Setup](#server-setup)
    * [Teamspeak3](#teamspeak3)
    * [Minecraft](#minecraft)
    * [Docker](#docker)
-3. [CI/CD Setup](#cicd-setup)
+4. [CI/CD Setup](#cicd-setup)
    * [GitHub](#github)
    * [DockerHub](#dockerhub)
    * [Deployment](#deployment)
+
+## Introduction
+As full-stack-developer you need as well to know how to setup a server and how to auto-deploy software on it. Aim is to document the setup. The setup itself is the infrastructure solution for [suadin.de](https://suadin.de) which hosts the [SukiG](https://github.com/suadin/SukiG) website with low budget and high functionality.
 
 ## Domain Setup
 
@@ -120,7 +124,7 @@ Source documentations: [docker](https://thomasbandt.com/running-aspnetcore-with-
 
 ## CI/CD Setup
 
-[Continuous Integration (CI)](https://en.wikipedia.org/wiki/Continuous_integration) and [Continuous Delivery (CD)](https://en.wikipedia.org/wiki/Continuous_delivery) of own websites and webapis happens through [GitHub](https://github.com/), [DockerHub](https://hub.docker.com/). Pull of docker image happens with [deployment script](#deployment) on Server.
+[Continuous Integration (CI)](https://en.wikipedia.org/wiki/Continuous_integration) and [Continuous Delivery (CD)](https://en.wikipedia.org/wiki/Continuous_delivery) of own software solutions happens through [GitHub](https://github.com/) and [DockerHub](https://hub.docker.com/). Pull of docker image happens with [deployment script](#deployment) on Server.
 
 Following diagram shows final CI/CD setup:
 
