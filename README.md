@@ -12,7 +12,7 @@
    * [Deployment](#deployment)
 
 ## Introduction
-As full-stack-developer you need as well to know how to setup a server and how to auto-deploy software on it. Aim is to document the setup. The setup itself is the infrastructure solution for [suadin.de](https://suadin.de) which hosts the [SukiG](https://github.com/suadin/SukiG) website with low budget and high functionality.
+As full-stack-developer you need as well to know how to setup a server and how to auto-deploy software on it. Aim is to document the setup. The setup itself is the infrastructure solution for [suadin.de](https://suadin.de) which hosts the [suadin/suadin.de](https://github.com/suadin/suadin.de) website with low budget and high functionality.
 
 ## Domain Setup
 
@@ -61,10 +61,10 @@ Source documentation [here](https://www.beruni.de/teamspeak-3-server-auf-strato-
 Source documentation [here](https://www.vpsserver.com/community/tutorials/4005/minecraft-spigot-bukkit-server-on-ubuntu/):
 1. sudo apt-get install openjdk-8-jdk
 2. copy/paste via [WinSCP](https://winscp.net/eng/download.php) existing spigot server
-   * follow original documentation for new setup
-     * sudo apt install git
-     * wget https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar
-     * java -jar BuildTools.jar
+3. if you have no existing spigot server, execute following steps to create new spigot server
+   * sudo apt install git
+   * wget https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar
+   * java -jar BuildTools.jar
 3. nano start.sh
    * while true; do echo "Starting server now!";
    * java -Xms4G -Xmx4G -XX:+UseConcMarkSweepGC -jar spigot-1.16.5.jar
@@ -105,7 +105,7 @@ Source documentations: [docker](https://thomasbandt.com/running-aspnetcore-with-
    * Email address: ***
    * Read Terms of Service: Yes
    * Share Email address: NO
-   * Domain names: suadin.de, www.suadin.de
+   * Domain names: suadin.de
    * Choose webroot: doesn't now, cancel throws error, therefore in step 8 & 9 I try alternative to --webroot
 8. stop webserver
    * sudo su docker
@@ -132,12 +132,7 @@ Following diagram shows final CI/CD setup:
 
 ### GitHub
 
-GitHub account [suadin](https://github.com/suadin) contains following relevant [GIT](https://en.wikipedia.org/wiki/Git) repositories:
-* [Infrastructure](https://github.com/suadin/Infrastructure): contains documentation of infrastructure with relevant scripts and configs
-* [Example Website](https://github.com/suadin/Example): very simple website, currently realized for CI/CD
-* [SukiG Website](https://github.com/suadin/SukiG): main website written with [Blazor](https://dotnet.microsoft.com/apps/aspnet/web-apps/blazor)
-
-Currently we have no branching model, all code changes happens on main branch.
+GitHub account [suadin](https://github.com/suadin) contains the ci/cd relevant [GIT](https://en.wikipedia.org/wiki/Git) repository [suadin/suadin.de](https://github.com/suadin/suadin.de). All changes on main-branch triggers CI process.
 
 ### DockerHub
 
@@ -150,7 +145,7 @@ Deployment based on following idea:
 2. if an old version exists, stop and remove old version
 3. run new version
 
-<details><summary>Following script implements steps above: /home/docker/continuous-deployment.sh</summary>
+<details><summary>Following script implements CD: /home/docker/continuous-deployment.sh</summary>
 <p>
 
 ```sh
@@ -198,7 +193,7 @@ done
 </p>
 </details>
 
-Start script manually as docker user with `screen ./continuous-deployment.sh`. Ensure running script after server reboots by adding with root user CRON job:
+Start script manually as docker user with `screen ./continuous-deployment.sh`. Start script after server reboots by adding with root user CRON job:
 * nano /etc/crontab
    * add @reboot docker /usr/bin/screen -dmS continuous-deployment-screen /home/docker/continuous-deployment.sh
    * Ctrl+O, Enter, Ctrl+X
