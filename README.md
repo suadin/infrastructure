@@ -160,6 +160,41 @@ Usually
   2. add new private key into website
   
 > :warning: But never did it, therefore open task to do setup.
+  
+### PostgreSQL
+  
+Source documentations: [postgresql installation](https://www.postgresqltutorial.com/install-postgresql-linux/), [create user](https://www.postgresql.org/docs/8.0/sql-createuser.html), [grant user](https://serverfault.com/questions/240887/whats-the-required-to-make-a-normal-user-can-create-schema-on-postgresql)
+  1. sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
+  1. wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+  1. sudo apt-get update
+  1. sudo apt-get install postgresql
+  1. sudo apt-get install postgresql-12
+  1. sudo -i -u postgres
+  1. psql
+     1. CREATE DATABASE suadin;
+     1. CREATE USER suadin WITH PASSWORD 'jw8s0F4';
+     1. GRANT CREATE ON DATABASE suadin TO suadin;
+     1. \q
+  1. exit
+  1. exit
+
+### pgAdmin4
+  
+Source documentations: [pgAdmin4 installation](https://www.tecmint.com/install-postgresql-and-pgadmin-in-ubuntu/), [change apache port](https://ubiq.co/tech-blog/how-to-change-port-number-in-apache-in-ubuntu/).
+  1. use root user!
+  1. cd /etc/postgresql
+  1. curl https://www.pgadmin.org/static/packages_pgadmin_org.pub | sudo apt-key add
+  1. sudo sh -c 'echo "deb https://ftp.postgresql.org/pub/pgadmin/pgadmin4/apt/$(lsb_release -cs) pgadmin4 main" > /etc/apt/sources.list.d/pgadmin4.list && apt update'
+  1. sudo apt install pgadmin4
+  1. change port of apache, because port 80/443 is already used by website
+     1. nano /etc/apache2/ports.conf --> replace 80/443 with 8080/8443
+     1. nano /etc/apache2/sites-enabled/000-default.conf --> replace 80 with 8080
+     1. sudo systemctl restart apache2 #SystemD
+     1. sudo service apache2 restart #SysVInit
+  1. sudo /usr/pgadmin4/bin/setup-web.sh
+
+Now pgadmin4 is available with http://81.169.247.92:8080/pgadmin4.
+
 
 ## CI/CD Setup
 
