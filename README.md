@@ -93,34 +93,73 @@ Source documentation [here](https://www.digitalocean.com/community/tutorials/so-
 10. screen -d -m bash -c "docker run -p 8080:80 docker/getting-started"
     * check [suadin.de:8080](http://suadin.de:8080) shows getting started website for docker
 
-### SSL
+### SSL Create
 Source documentations: [docker](https://thomasbandt.com/running-aspnetcore-with-https-in-a-docker-container), [snapd/certbot](https://certbot.eff.org/lets-encrypt/ubuntubionic-other), [pfx](https://www.ssl.com/how-to/create-a-pfx-p12-certificate-file-using-openssl/)
 1. sudo apt install snapd
-2. sudo apt install fuse
-3. sudo snap install core; sudo snap refresh core
-4. sudo apt-get remove certbot
-5. sudo snap install --classic certbot
-6. sudo ln -s /snap/bin/certbot /usr/bin/certbot
-7. sudo certbot certonly --webroot
+1. sudo apt install fuse
+1. sudo snap install core; sudo snap refresh core
+1. sudo apt-get remove certbot
+1. sudo snap install --classic certbot
+1. sudo ln -s /snap/bin/certbot /usr/bin/certbot
+1. sudo certbot certonly --webroot
    * Email address: ***
    * Read Terms of Service: Yes
    * Share Email address: NO
    * Domain names: suadin.de
    * Choose webroot: doesn't now, cancel throws error, therefore in step 8 & 9 I try alternative to --webroot
-8. stop webserver
+1. stop webserver
    * sudo su docker
    * stop suto-deployment: screen -ls, screen -r <screen-id>, Ctrl+A, K, Y
    * stop container: docker container ls, docker container stop <container-id>
    * exit
-9. sudo certbot certonly --standalone, enter domain, expect "Congratulations!"
+1. sudo certbot certonly --standalone, enter domain, expect "Congratulations!"
    * /etc/letsencrypt/live/suadin.de/fullchain.pem
    * /etc/letsencrypt/live/suadin.de/privkey.pem
-10. sudo openssl pkcs12 -export -out suadin.de.pfx -inkey /etc/letsencrypt/live/suadin.de/privkey.pem -in /etc/letsencrypt/live/suadin.de/fullchain.pem
+1. sudo openssl pkcs12 -export -out suadin.de.pfx -inkey /etc/letsencrypt/live/suadin.de/privkey.pem -in /etc/letsencrypt/live/suadin.de/fullchain.pem
     * choose export password
-11. prepare *.pfx for docker usage
+1. prepare *.pfx for docker usage
     * sudo mkdir /home/docker/.aspnet
     * sudo mkdir /home/docker/.aspnet/https
     * sudo cp suadin.de.pfx /home/docker/.aspnet/https/
+  
+### SSL Manual Renew
+
+1. <details><summary>stop website</summary>
+   <p>
+
+   ```sh
+   su docker  
+   pkill screen
+   container_id=$(docker ps -aqf "name=$repo" -aqf "status=running")
+   if [ ! -z "$container_id" ]; then
+      docker container stop "$container_id"
+   fi
+   ```
+     
+   </p>
+   </details>
+1. `sudo certbot renew`
+1. execute last two steps from SSL setup
+1. <details><summary>start website</summary>
+   <p>
+
+   ```sh
+   su docker
+   cd ~
+   screen ./continuous-deployment.sh
+   ```
+     
+   </p>
+   </details>
+  
+### SSL Auto Renew
+  
+Usually
+  1. add start and stop webservice as pre and post scripts into certbot
+  1. create private key with using password
+  2. add new private key into website
+  
+> :warning: But never did it, therefore open task to do setup.
 
 ## CI/CD Setup
 
