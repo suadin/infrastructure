@@ -195,6 +195,8 @@ Source documentations: [pgAdmin4 installation](https://www.tecmint.com/install-p
 
 Now pgadmin4 is available with http://81.169.247.92:8080/pgadmin4.
 
+Too long, therefore login to strato, create subdomain db.suadin.de and create external detour to http://81.169.247.92:8080/pgadmin4. Now pgadmin4 is available with http://db.suadin.de.
+
 
 ## CI/CD Setup
 
