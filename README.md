@@ -32,7 +32,15 @@ First step documented [here](https://www.strato.de/faq/domains/welche-einstellun
 
 ### Google
 
-TODO
+1. Login to your google account
+1. goto [domain verification](https://console.cloud.google.com/apis/credentials/domainverification)
+1. add domain suadin.de
+1. you need to proof domain ownership
+   1. select provider: strato
+   1. take `CNAME-Label/Host` and `CNAME-Target`
+   1. create subdomain with same name like `CNAME-Label/Host`
+   1. configure into subdomain [CNAME-Record](https://www.strato.de/faq/domains/wie-kann-ich-bei-strato-meine-dns-eintraege-verwalten/) with `CNAME-Target`
+   1. expect comfirmation
 
 ## Server Setup
 
