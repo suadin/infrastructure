@@ -1,12 +1,20 @@
 # Table of Contents
 
 1. [Introduction](#introduction)
-2. [Domain Setup](#domain-setup) 
-3. [Server Setup](#server-setup)
+2. [Domain Setup](#domain-setup)
+   * [Server](#server)
+   * [Google](#google)
+4. [Server Setup](#server-setup)
    * [Teamspeak3](#teamspeak3)
    * [Minecraft](#minecraft)
    * [Docker](#docker)
-4. [CI/CD Setup](#cicd-setup)
+   * [SSL](#ssl)
+     * [SSL-Create](#ssl-create)
+     * [SSL-Manual-Renew](#ssl-manual-renew)
+     * [SSL-Auto-Renew](#ssl-auto-renew)
+   * [PostgreSQL](#postgresql)
+   * [pgAdmin4](#pgadmin4)
+5. [CI/CD Setup](#cicd-setup)
    * [GitHub](#github)
    * [DockerHub](#dockerhub)
    * [Deployment](#deployment)
@@ -16,9 +24,15 @@ As full-stack-developer you need as well to know how to setup a server and how t
 
 ## Domain Setup
 
+### Server
+
 Domain [suadin.de](http://suadin.de) and Server [81.169.247.92]() are currently managed in [strato](https://www.strato.de/). Domain is not by default directly assigned to Server, small Domain Setup was necessary.
 
 First step documented [here](https://www.strato.de/faq/domains/welche-einstellungen-kann-ich-im-konfigurationsdialog-a-record-vornehmen/) (found only german version), add on DNS properties of Domain the Server IP as [A-Record](https://simple.wikipedia.org/wiki/A_record). Second step documented [here](https://www.strato.com/faq/en_us/product/this-is-how-you-can-set-a-custom-dns-reverse-for-your-ip-addresses/), add on Server the Domain as [DNS-Reverse](https://en.wikipedia.org/wiki/Reverse_DNS_lookup). First step is required to do second step successfully.
+
+### Google
+
+TODO
 
 ## Server Setup
 
@@ -93,8 +107,10 @@ Source documentation [here](https://www.digitalocean.com/community/tutorials/so-
 10. screen -d -m bash -c "docker run -p 8080:80 docker/getting-started"
     * check [suadin.de:8080](http://suadin.de:8080) shows getting started website for docker
 
-### SSL Create
+### SSL
 Source documentations: [docker](https://thomasbandt.com/running-aspnetcore-with-https-in-a-docker-container), [snapd/certbot](https://certbot.eff.org/lets-encrypt/ubuntubionic-other), [pfx](https://www.ssl.com/how-to/create-a-pfx-p12-certificate-file-using-openssl/)
+
+#### SSL-Create
 1. sudo apt install snapd
 1. sudo apt install fuse
 1. sudo snap install core; sudo snap refresh core
@@ -122,7 +138,7 @@ Source documentations: [docker](https://thomasbandt.com/running-aspnetcore-with-
     * sudo mkdir /home/docker/.aspnet/https
     * sudo cp suadin.de.pfx /home/docker/.aspnet/https/
   
-### SSL Manual Renew
+#### SSL-Manual-Renew
 
 1. <details><summary>stop website</summary>
    <p>
@@ -152,7 +168,7 @@ Source documentations: [docker](https://thomasbandt.com/running-aspnetcore-with-
    </p>
    </details>
   
-### SSL Auto Renew
+#### SSL-Auto-Renew
   
 Usually
   1. add start and stop webservice as pre and post scripts into certbot
