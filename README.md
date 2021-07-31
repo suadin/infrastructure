@@ -296,7 +296,8 @@ do
       sleep 1
     fi
     echo "start container with image $feed"
-    screen -d -m bash -c "docker run $docker_params --name $repo $feed"
+    secrets="--env-file secrets.txt"
+    screen -d -m bash -c "docker run $docker_params $secrets --name $repo $feed"
     sleep 60
   else
     echo "Script doesn't work like expected, please verify!"
@@ -307,6 +308,8 @@ done
 
 </p>
 </details>
+
+For pass secrets into website like google auth or database credentials secrets.txt file is stored on server. Not strong secured but enough for private purpose. Format of the secret file took from [here](https://www.baeldung.com/ops/docker-container-environment-variables).
 
 Start script manually as docker user with `screen ./continuous-deployment.sh`. Start script after server reboots by adding with root user CRON job:
 * nano /etc/crontab
