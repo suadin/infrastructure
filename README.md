@@ -16,7 +16,7 @@
    * [pgAdmin4](#pgadmin4)
 5. [CI/CD Setup](#cicd-setup)
    * [GitHub](#github)
-   * [DockerHub](#dockerhub)
+   * [DockerHub](#dockerhub) :exclamation:
    * [Deployment](#deployment)
 
 ## Introduction
