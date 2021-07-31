@@ -7,7 +7,7 @@
 1. [**Website**](#website-deployment) -> [GitHub-Repository](#github-repository) | [DockerHub-Repository](#dockerhub-repository) | [GitHub-Actions](#github-actions) | [Deployment-Script](#deployment-script)
 
 # Introduction
-As full-stack-developer you need as well to know how to host software. For example infrastructure of [[website](https://github.com/suadin/website)] but as well other software like [Teamspeak3](#teamspeak3) or [Minecraft](#minecraft). Aim of documentation is to host these software with low budget and high functionality.
+As full-stack-developer you need as well to know how to host software. For example infrastructure of [website](https://github.com/suadin/website) but as well other software like [Teamspeak3](#teamspeak3) or [Minecraft](#minecraft). Aim of documentation is to host these software with low budget and high functionality.
 
 # Domain
 
