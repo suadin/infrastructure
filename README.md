@@ -221,7 +221,6 @@ Now pgadmin4 is available with http://81.169.247.92:8080/pgadmin4.
 
 Too long, therefore login to strato, create subdomain db.suadin.de and create external detour to http://81.169.247.92:8080/pgadmin4. Now pgadmin4 is available with http://db.suadin.de.
 
-
 ## CI/CD Setup
 
 [Continuous Integration (CI)](https://en.wikipedia.org/wiki/Continuous_integration) and [Continuous Delivery (CD)](https://en.wikipedia.org/wiki/Continuous_delivery) of own software solutions happens through [GitHub](https://github.com/) and [DockerHub](https://hub.docker.com/). Pull of docker image happens with [deployment script](#deployment) on Server.
@@ -240,7 +239,18 @@ First connect to GitHub repository with following [trivial steps](https://docs.d
 
 > :warning: **If you get error 'COPY failed: stat /var/lib/docker/tmp/docker-builder...'**: I solved it by remove repo from docker-hub and create new with same name.
   
-> :exclamation: **DockerHub force you to Upgrade your account**: Unfortunately pull-based deployment has the negative aspect that it looks like that lot of people are pulling your image and then you need to Upgrade your account on DockerHub. BUT my aim is to have a low budget setup, therefore we will leave DockerHub.
+> :exclamation: **DockerHub force you to Upgrade your account if you need a connection to github**: Solved that by using GitHub Actions to push images to DockerHub & GitHub Packages.
+
+### GitHub Actions
+
+Source Documentation [here](https://docs.github.com/en/actions/guides/publishing-docker-images):
+1. put DockerHub secrets into GitHub
+1. follow instructions for push to DockerHub & GitHub Packages
+1. do slidely changes on pipeline:
+   1. add on both `build & publish` steps below context `file: src/Server/Dockerfile`
+   1. replace hashed versions like `docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc` with major versions like `docker/build-push-action@v2` [example](https://www.docker.com/blog/docker-v2-github-action-is-now-ga/)
+
+:information_source: Could happen that we change to GitHub Packages to remove dependency to DockerHub, but for now it works well.
   
 ### Deployment
 
@@ -255,7 +265,7 @@ Deployment based on following idea:
 ```sh
 #!/bin/bash
 repo="<repo-name>"
-feed="<dockerhub-id>/$repo"
+feed="<dockerhub-id>/$repo:main"
 docker_params="-p 80:80 -p 443:443 -e ASPNETCORE_URLS=\"https://+443;http://+80\" -e ASPNETCORE_HTTPS_PORT=443 -e ASPNETCORE_Kestrel__Certificates__Default__Password=\"$cert_password\" -e ASPNETCORE_Kestrel__Certificates__Default__Path=/https/suadin.de.pfx -v ~/.aspnet/https:/https/"
 while [ true ]
 do
@@ -265,7 +275,7 @@ do
   sleep 1
   container_id=$(docker ps -aqf "name=$repo" -aqf "status=running")
   pull=$(docker pull $feed)
-  if [[ $pull == *"Status: Image is up to date for $feed:latest"* ]]; then
+  if [[ $pull == *"Status: Image is up to date for $feed"* ]]; then
     if [ ! -z "$container_id" ]; then
       echo "Nothing to do..."
     else
@@ -274,7 +284,7 @@ do
       screen -d -m bash -c "docker run $docker_params --name $repo $feed"
     fi
     sleep 60
-  elif [[ $pull == *"Downloaded newer image for $feed:latest"* ]]; then
+  elif [[ $pull == *"Downloaded newer image for $feed"* ]]; then
     echo "New version detected!"
     if [ ! -z "$container_id" ]; then
       echo "stop container $container_id"
