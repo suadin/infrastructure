@@ -239,7 +239,9 @@ GitHub account [suadin](https://github.com/suadin) contains the ci/cd relevant [
 First connect to GitHub repository with following [trivial steps](https://docs.docker.com/docker-hub/builds/link-source/). Next [setup automated builds](https://docs.docker.com/docker-hub/builds/), choose main branch and link to existing Dockerfile. At least push your code into GitHub, expect DockerHub build runs. If the latest build status shows SUCCESS, then we are done with CI and can start with CD in Deployment capture.
 
 > :warning: **If you get error 'COPY failed: stat /var/lib/docker/tmp/docker-builder...'**: I solved it by remove repo from docker-hub and create new with same name.
-
+  
+> :exclamation: **DockerHub force you to Upgrade your account**: Unfortunately pull-based deployment has the negative aspect that it looks like that lot of people are pulling your image and then you need to Upgrade your account on DockerHub. BUT my aim is to have a low budget setup, therefore we will leave DockerHub.
+  
 ### Deployment
 
 Deployment based on following idea:
