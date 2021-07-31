@@ -16,7 +16,7 @@
    * [pgAdmin4](#pgadmin4)
 5. [CI/CD Setup](#cicd-setup)
    * [GitHub](#github)
-   * [DockerHub](#dockerhub) :exclamation:
+   * [DockerHub](#dockerhub)
    * [Deployment](#deployment)
 
 ## Introduction
@@ -239,7 +239,7 @@ First connect to GitHub repository with following [trivial steps](https://docs.d
 
 > :warning: **If you get error 'COPY failed: stat /var/lib/docker/tmp/docker-builder...'**: I solved it by remove repo from docker-hub and create new with same name.
   
-> :exclamation: **DockerHub force you to Upgrade your account if you need a connection to github**: Solved that by using GitHub Actions to push images to DockerHub & GitHub Packages.
+> :warning: **DockerHub force you to Upgrade your account if you need a connection to github**: Solved that by using GitHub Actions to push images to DockerHub.
 
 ### GitHub Actions
 
