@@ -17,6 +17,7 @@
 5. [CI/CD Setup](#cicd-setup)
    * [GitHub](#github)
    * [DockerHub](#dockerhub)
+   * [GitHub-Actions](#github-actions)
    * [Deployment](#deployment)
 
 ## Introduction
@@ -241,7 +242,7 @@ First connect to GitHub repository with following [trivial steps](https://docs.d
   
 > :warning: **DockerHub force you to Upgrade your account if you need a connection to github**: Solved that by using GitHub Actions to push images to DockerHub.
 
-### GitHub Actions
+### GitHub-Actions
 
 Source Documentation [here](https://docs.github.com/en/actions/guides/publishing-docker-images):
 1. put DockerHub secrets into GitHub
@@ -250,7 +251,7 @@ Source Documentation [here](https://docs.github.com/en/actions/guides/publishing
    1. add on both `build & publish` steps below context `file: src/Server/Dockerfile`
    1. replace hashed versions like `docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc` with major versions like `docker/build-push-action@v2` [example](https://www.docker.com/blog/docker-v2-github-action-is-now-ga/)
 
-:information_source: Could happen that we change to GitHub Packages to remove dependency to DockerHub, but for now it works well.
+> :information_source: Could happen that we change to GitHub Packages to remove dependency to DockerHub, but for now it works well.
   
 ### Deployment
 
