@@ -1,22 +1,10 @@
 # Table of Contents
 
-1. [Introduction](#introduction)
-1. [Domain](#domain)
-   * [Server](#server)
-   * [Google](#google)
-1. [Hosting](#hosting)
-   * [Docker](#docker)
-   * [Teamspeak3](#teamspeak3)
-   * [Minecraft](#minecraft)
-   * [PostgreSQL](#postgresql)
-   * [pgAdmin4](#pgadmin4)
-1. [Security](#security)
-   * [SSL-Certificate](#ssl-certificate)
-1. [Website-Deployment](#website-deployment)
-   * [GitHub-Repository](#github-repository)
-   * [DockerHub-Repository](#dockerhub-repository)
-   * [GitHub-Actions](#github-actions)
-   * [Deployment-Script](#deployment-script)
+1. [**Introduction**](#introduction)
+1. [**Domain**](#domain) -> [Server](#server) | [Google](#google)
+1. [**Hosting**](#hosting) -> [Docker](#docker) | [Teamspeak](#teamspeak) | [Minecraft](#minecraft) | [PostgreSQL](#postgresql) | [pgAdmin4](#pgadmin4)
+1. [**Security**](#security) -> [SSL-Certificate](#ssl-certificate)
+1. [**Website**](#website-deployment) -> [GitHub-Repository](#github-repository) | [DockerHub-Repository](#dockerhub-repository) | [GitHub-Actions](#github-actions) | [Deployment-Script](#deployment-script)
 
 # Introduction
 As full-stack-developer you need as well to know how to host software. For example infrastructure of https://suadin.de [details](https://github.com/suadin/website) but as well other software like [Teamspeak3](#teamspeak3) or [Minecraft](#minecraft). Aim of documentation is to host these software with low budget and high functionality.
@@ -31,160 +19,64 @@ Domain [suadin.de](http://suadin.de) and Server [81.169.247.92](http://suadin.de
 
 ## Google
 
-1. Login to your google account
-1. goto [domain verification](https://console.cloud.google.com/apis/credentials/domainverification)
-1. add domain [suadin.de](http://suadin.de)
-1. you need to proof domain ownership
-   1. select provider: strato
-   1. take `CNAME-Label/Host` and `CNAME-Target`
-   1. create subdomain with same name like `CNAME-Label/Host`
-   1. configure into subdomain [CNAME-Record](https://www.strato.de/faq/domains/wie-kann-ich-bei-strato-meine-dns-eintraege-verwalten/) with `CNAME-Target`
-   1. expect comfirmation
+1. Login to your google account, goto [domain verification](https://console.cloud.google.com/apis/credentials/domainverification), add domain [suadin.de](http://suadin.de)
+1. proof domain ownership: select strato, create subdomain `CNAME-Target`, configure [CNAME-Record](https://www.strato.de/faq/domains/wie-kann-ich-bei-strato-meine-dns-eintraege-verwalten/) with `CNAME-Target`
 
 # Hosting
 
-Server has as Operating System (OS) **Ubuntu 18.04 LTS 64bit**.
+Server has Operating System (OS) **Ubuntu 18.04 LTS 64bit**. Pre-Installs: `sudo apt-get install screen`, `sudo apt-get install nano`
 
-Pre-Installations: `sudo apt-get install screen`, `sudo apt-get install nano`
+## Template
 
-Template:
-1. pre steps
-   1. login as root
-   1. update packages: `apt update`, `apt upgrade`
-   1. create and login user: `adduser $user_name`, `usermod -aG sudo $user_name`, `su $user_name`, `cd ~`
-1. main steps:
-   1. **see sub-captures below**
-3. post steps: 
-   1. logout $user_name: `exit`
-   1. remove sudo permissions: `sudo deluser $user_name sudo`, `chown -hR $user_name:$user_name /home/$user_name`
-   1. logout root: `exit`
+1. login as root, `apt update`, `apt upgrade`, `adduser $user_name`, `usermod -aG sudo $user_name`, `su $user_name`, `cd ~`
+1. main steps on next capters
+1. `exit`, `sudo deluser $user_name sudo`, `chown -hR $user_name:$user_name /home/$user_name`, `exit`
 
 ## Docker
 
-[[source](https://www.digitalocean.com/community/tutorials/so-installieren-und-verwenden-sie-docker-auf-ubuntu-18-04-de)]
-1. `sudo apt install apt-transport-https ca-certificates curl software-properties-common`
+1. follow step 1 of guide [[source](https://www.digitalocean.com/community/tutorials/so-installieren-und-verwenden-sie-docker-auf-ubuntu-18-04-de)]
+1. follow step 2 but with slidely different commands: `sudo gpasswd -a docker docker`, `sudo service docker restart`
+1. start docker in screen: `screen -d -m bash -c "docker run -p 8080:80 docker/getting-started"`, check: http://suadin.de:8080
 
+## Teamspeak
 
-1. curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-1. sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable"
-1. apt-cache policy docker-ce
-1. sudo apt install docker-ce
-1. sudo systemctl status docker
-1. sudo groupadd docker
-1. sudo gpasswd -a docker docker
-1. sudo service docker restart
-1. screen -d -m bash -c "docker run -p 8080:80 docker/getting-started"
-    * check [suadin.de:8080](http://suadin.de:8080) shows getting started website for docker
-
-## Teamspeak3
-
-Source documentation [here](https://www.beruni.de/teamspeak-3-server-auf-strato-server-installieren/):
-1. wget https://files.teamspeak-services.com/releases/server/3.9.1/teamspeak3-server_linux_amd64-3.13.2.tar.bz2
-2. tar xfvj teamspeak3-server_linux_amd64-3.13.2.tar.bz2
-3. rm teamspeak3-server_linux_amd64-3.13.2.tar.bz2
-4. cd teamspeak3-server_linux_amd64
-5. touch .ts3server_license_accepted
-6. chmod +x ts3server_startscript.sh
-7. ./ts3server_startscript.sh start
-8. sudo chown -hR teamspeak3:teamspeak3 /home/teamspeak3
-9. nano /etc/crontab
-   * add **@reboot teamspeak3 /home/teamspeak3/teamspeak3-server_linux_amd64/ts3server_startscript.sh**
-   * Ctrl+O, Enter, Ctrl+X
+1. download/unpack/accept-license with guide [[source](https://www.arubacloud.com/tutorial/how-to-install-and-configure-a-teamspeak-server-on-ubuntu-20-04.aspx)]
+1. add into autostart: `nano /etc/crontab` -> add `@reboot teamspeak3 /home/teamspeak3/teamspeak3-server_linux_amd64/ts3server_startscript.sh`
+3. grant/start script: `chmod +x ts3server_startscript.sh`, `sudo chown -hR teamspeak3:teamspeak3 /home/teamspeak3`, `./ts3server_startscript.sh start`
 
 ## Minecraft
 
-Source documentation [here](https://www.vpsserver.com/community/tutorials/4005/minecraft-spigot-bukkit-server-on-ubuntu/):
-1. sudo apt-get install openjdk-8-jdk
-2. copy/paste via [WinSCP](https://winscp.net/eng/download.php) existing spigot server
-3. if you have no existing spigot server, execute following steps to create new spigot server
-   * sudo apt install git
-   * wget https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar
-   * java -jar BuildTools.jar
-3. nano start.sh
-   * while true; do echo "Starting server now!";
-   * java -Xms4G -Xmx4G -XX:+UseConcMarkSweepGC -jar spigot-1.16.5.jar
-   * echo "Server restarting in 5 seconds! Press control+c to stop!"; sleep 5; done;
-4. sudo chmod +x start.sh
-5. nano eula.txt
-   * eula=true
-6. screen ./start.sh
-   * Ctrl+A+D
-7. nano /etc/crontab
-   * add **@reboot minecraft /usr/bin/screen -dmS minecraft-screen /home/minecraft/start.sh**
-   * Ctrl+O, Enter, Ctrl+X
+1. follow guide to setup new world [[source](https://www.vpsserver.com/community/tutorials/4005/minecraft-spigot-bukkit-server-on-ubuntu/)]
+1. overwrite files with existing world via [WinSCP](https://winscp.net/eng/download.php)
+1. add into autostart: `nano /etc/crontab` -> add `@reboot minecraft /usr/bin/screen -dmS minecraft-screen /home/minecraft/start.sh`
 
 ## PostgreSQL
   
-Source documentations: [postgresql installation](https://www.postgresqltutorial.com/install-postgresql-linux/), [create user](https://www.postgresql.org/docs/8.0/sql-createuser.html), [grant user](https://serverfault.com/questions/240887/whats-the-required-to-make-a-normal-user-can-create-schema-on-postgresql)
-  1. sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
-  1. wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
-  1. sudo apt-get update
-  1. sudo apt-get install postgresql
-  1. sudo apt-get install postgresql-12
-  1. sudo -i -u postgres
-  1. psql
-     1. CREATE DATABASE suadin;
-     1. CREATE USER suadin WITH PASSWORD 'jw8s0F4';
-     1. GRANT CREATE ON DATABASE suadin TO suadin;
-     1. \q
-  1. exit
-  1. exit
+1. folow install guide [[source](https://www.postgresqltutorial.com/install-postgresql-linux/)]
+1. [create](https://www.postgresql.org/docs/8.0/sql-createuser.html)/[grant](https://serverfault.com/questions/240887/whats-the-required-to-make-a-normal-user-can-create-schema-on-postgresql) database/user: `sudo -i -u postgres`, `psql`, `CREATE DATABASE suadin;`, `CREATE USER suadin WITH PASSWORD 'jw8s0F4';`, `GRANT CREATE ON DATABASE suadin TO suadin;`, `\q`, `exit`, `exit` 
 
 ## pgAdmin4
-  
-Source documentations: [pgAdmin4 installation](https://www.tecmint.com/install-postgresql-and-pgadmin-in-ubuntu/), [change apache port](https://ubiq.co/tech-blog/how-to-change-port-number-in-apache-in-ubuntu/).
-  1. use root user!
-  1. cd /etc/postgresql
-  1. curl https://www.pgadmin.org/static/packages_pgadmin_org.pub | sudo apt-key add
-  1. sudo sh -c 'echo "deb https://ftp.postgresql.org/pub/pgadmin/pgadmin4/apt/$(lsb_release -cs) pgadmin4 main" > /etc/apt/sources.list.d/pgadmin4.list && apt update'
-  1. sudo apt install pgadmin4
-  1. change port of apache, because port 80/443 is already used by website
-     1. nano /etc/apache2/ports.conf --> replace 80/443 with 8080/8443
-     1. nano /etc/apache2/sites-enabled/000-default.conf --> replace 80 with 8080
-     1. sudo systemctl restart apache2 #SystemD
-     1. sudo service apache2 restart #SysVInit
-  1. sudo /usr/pgadmin4/bin/setup-web.sh
-  1. create subdomain https://db.suadin.de and create external detour to http://81.169.247.92:8080/pgadmin4
+
+1. use root user and follow guide for install pgAdmin4, scroll a bit down [[source](https://www.tecmint.com/install-postgresql-and-pgadmin-in-ubuntu/)]
+1. change apache port to have no conflict with suadin.de [[source](https://ubiq.co/tech-blog/how-to-change-port-number-in-apache-in-ubuntu/)]
+1. start pgAdmin4: `sudo /usr/pgadmin4/bin/setup-web.sh`
+1. create subdomain https://db.suadin.de with external detour http://81.169.247.92:8080/pgadmin4 
 
 # Security
 
 ## SSL-Certificate
 
-Source documentations: [docker](https://thomasbandt.com/running-aspnetcore-with-https-in-a-docker-container), [snapd/certbot](https://certbot.eff.org/lets-encrypt/ubuntubionic-other), [pfx](https://www.ssl.com/how-to/create-a-pfx-p12-certificate-file-using-openssl/)
-
 ### Create-Certificate
-1. sudo apt install snapd
-1. sudo apt install fuse
-1. sudo snap install core; sudo snap refresh core
-1. sudo apt-get remove certbot
-1. sudo snap install --classic certbot
-1. sudo ln -s /snap/bin/certbot /usr/bin/certbot
-1. sudo certbot certonly --webroot
-   * Email address: ***
-   * Read Terms of Service: Yes
-   * Share Email address: NO
-   * Domain names: suadin.de
-   * Choose webroot: doesn't now, cancel throws error, therefore in step 8 & 9 I try alternative to --webroot
-1. stop webserver
-   * sudo su docker
-   * stop suto-deployment: screen -ls, screen -r <screen-id>, Ctrl+A, K, Y
-   * stop container: docker container ls, docker container stop <container-id>
-   * exit
-1. sudo certbot certonly --standalone, enter domain, expect "Congratulations!"
-   * /etc/letsencrypt/live/suadin.de/fullchain.pem
-   * /etc/letsencrypt/live/suadin.de/privkey.pem
-1. sudo openssl pkcs12 -export -out suadin.de.pfx -inkey /etc/letsencrypt/live/suadin.de/privkey.pem -in /etc/letsencrypt/live/suadin.de/fullchain.pem
-    * choose export password
-1. prepare *.pfx for docker usage
-    * sudo mkdir /home/docker/.aspnet
-    * sudo mkdir /home/docker/.aspnet/https
-    * sudo cp suadin.de.pfx /home/docker/.aspnet/https/
+
+1. follow certbot guide until step 6, use on step 7 webroot with domain [suadin.de](https://suadin.de) [[source](https://certbot.eff.org/lets-encrypt/ubuntubionic-other)]
+1. stop [deployment script](#deployment-script), `sudo certbot certonly --standalone` with domain [suadin.de](https://suadin.de)
+   * result: `/etc/letsencrypt/live/suadin.de/fullchain.pem` & `/etc/letsencrypt/live/suadin.de/privkey.pem`
+1. convert `privkey.pem` with `fullchain.pem` to `suadin.de.pfx`, choose password [[source](https://www.ssl.com/how-to/create-a-pfx-p12-certificate-file-using-openssl/)]
+1. prepare *.pfx for docker: `sudo cp suadin.de.pfx /home/docker/.aspnet/https/` (create missing folder) [[source](https://thomasbandt.com/running-aspnetcore-with-https-in-a-docker-container)]
   
 ### Renew-Manual-Certificate
 
-1. <details><summary>stop website</summary>
-   <p>
-
+1. stop website with deployment script
    ```sh
    su docker  
    pkill screen
@@ -193,71 +85,57 @@ Source documentations: [docker](https://thomasbandt.com/running-aspnetcore-with-
       docker container stop "$container_id"
    fi
    ```
-     
-   </p>
-   </details>
 1. `sudo certbot renew`
-1. execute last two steps from SSL setup
-1. <details><summary>start website</summary>
-   <p>
-
+1. execute last two steps from [Create-Certificate](#create-certificate)
+1. start deployment scrip
    ```sh
    su docker
    cd ~
    screen ./continuous-deployment.sh
    ```
-     
-   </p>
-   </details>
   
 ### Renew-Auto-Certificate
-  
-Usually
-  1. add start and stop webservice as pre and post scripts into certbot
-  1. create private key with using password
-  2. add new private key into website
+
+1. follow step 9 of certobot guide [[source](https://certbot.eff.org/lets-encrypt/ubuntubionic-other)]
+1. `pre/haproxy.sh` contains first scriptblock from [Renew-Manual-Certificate](#renew-manual-certificate)
+1. `sudo certbot renew` is executed automatically between pre and post
+3. `post/haproxy.sh` contains
+   1. execute last two steps from [Create-Certificate](#create-certificate)
+   1. last scriptblock from [Renew-Manual-Certificate](#renew-manual-certificate)
   
 > :warning: But never did it, therefore open task to do setup.
 
 # Website-Deployment
 
-[Continuous Integration (CI)](https://en.wikipedia.org/wiki/Continuous_integration) and [Continuous Delivery (CD)](https://en.wikipedia.org/wiki/Continuous_delivery) of own software solutions happens through [GitHub](https://github.com/) and [DockerHub](https://hub.docker.com/). Pull of docker image happens with [deployment script](#deployment) on Server.
-
-Following diagram shows final CI/CD setup:
+[Continuous Integration (CI)](https://en.wikipedia.org/wiki/Continuous_integration) and [Continuous Delivery (CD)](https://en.wikipedia.org/wiki/Continuous_delivery) of website happens through [GitHub](https://github.com/) and [DockerHub](https://hub.docker.com/). Pull of docker image happens with [deployment script](#deployment) on Server.
 
 ![alternative text](http://www.plantuml.com/plantuml/png/PS_1IWGn30RWUv_YFmaUnWSOHFQme7Vn0JBJw5RRT4dIbNbxBHramDjV-lrjSZ8dzLPoeDMhuimtplNA6luIfYSy9tzfounhiujXhP7X5OMIO56IzHA6wFPSro_Mpl5UzPiqZaOO5__LqbBU3UvWNfKDgT37iV8uuPNrnjg7oDd0ltb3ITASTpt0aIOnfwuxwAzha_wJE2LXtPT-CzP3kHzdi7pMpM2DOfA7o9Yd-t1YYQta7m00)
 
 ## GitHub-Repository
 
-GitHub account [suadin](https://github.com/suadin) contains the ci/cd relevant [GIT](https://en.wikipedia.org/wiki/Git) repository [suadin/suadin.de](https://github.com/suadin/suadin.de). All changes on main-branch triggers CI process.
+GitHub account [suadin](https://github.com/suadin) contains [GIT](https://en.wikipedia.org/wiki/Git) repository of [website](https://github.com/suadin/website).
 
 ## DockerHub-Repository
 
-First connect to GitHub repository with following [trivial steps](https://docs.docker.com/docker-hub/builds/link-source/). Next [setup automated builds](https://docs.docker.com/docker-hub/builds/), choose main branch and link to existing Dockerfile. At least push your code into GitHub, expect DockerHub build runs. If the latest build status shows SUCCESS, then we are done with CI and can start with CD in Deployment capture.
+1. connect to GitHub repository [source](https://docs.docker.com/docker-hub/builds/link-source/), choose main branch and link to existing Dockerfile
+1. expect push into GitHub triggers DockerHub build run
 
 > :warning: **If you get error 'COPY failed: stat /var/lib/docker/tmp/docker-builder...'**: I solved it by remove repo from docker-hub and create new with same name.
-  
+
 > :warning: **DockerHub force you to Upgrade your account if you need a connection to github**: Solved that by using GitHub Actions to push images to DockerHub.
 
 ## GitHub-Actions
 
-Source Documentation [here](https://docs.github.com/en/actions/guides/publishing-docker-images):
-1. put DockerHub secrets into GitHub
-1. follow instructions for push to DockerHub & GitHub Packages
-1. do slidely changes on pipeline:
+1. put DockerHub secrets into GitHub [[source](https://docs.github.com/en/actions/reference/encrypted-secrets)]
+1. follow guide to push docker image into DockerHub & GitHub Packages [[source](https://docs.github.com/en/actions/guides/publishing-docker-images)]
+1. do slidely changes on last step [[source](https://www.docker.com/blog/docker-v2-github-action-is-now-ga/)]
    1. add on both `build & publish` steps below context `file: src/Server/Dockerfile`
-   1. replace hashed versions like `docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc` with major versions like `docker/build-push-action@v2` [example](https://www.docker.com/blog/docker-v2-github-action-is-now-ga/)
+   1. replace hashed versions `docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc` with major versions `docker/build-push-action@v2`
 
-> :information_source: Could happen that we change to GitHub Packages to remove dependency to DockerHub, but for now it works well.
+> :information_source: Change to GitHub Packages to remove DockerHub dependency
   
 ## Deployment-Script
 
-Deployment based on following idea:
-1. check (and get) frequently for new version with `docker pull`
-2. if an old version exists, stop and remove old version
-3. run new version
-
-Following script implements Deployment:
 ```sh
 #!/bin/bash
 repo="<repo-name>"
@@ -300,10 +178,14 @@ do
   fi
 done
 ```
+Comments:
+* `while [ true ]` & `sleep 60`: minutely endless loop
+* `sleep 1` before/after prune necessary to avoid error messages
+* `container_id=$(docker ps -aqf "name=$repo" -aqf "status=running")`: take container id for potential stop and prune
+* `pull=$(docker pull $feed)`: pull spam to detect potential changes
+* `docker_params="-p 80:80 -p 443:443 ...`: configure ports, specially https with certificate binding [[details](#ssl-certificate)]
+* `secrets="--env-file secrets.txt"`: for pass secrets into website [[source](https://www.baeldung.com/ops/docker-container-environment-variables)]
 
-For pass secrets into website like google auth or database credentials secrets.txt file is stored on server. Not strong secured but enough for private purpose. Format of the secret file took from [here](https://www.baeldung.com/ops/docker-container-environment-variables).
-
-Start script manually as docker user with `screen ./continuous-deployment.sh`. Start script after server reboots by adding with root user CRON job:
-* nano /etc/crontab
-   * add @reboot docker /usr/bin/screen -dmS continuous-deployment-screen /home/docker/continuous-deployment.sh
-   * Ctrl+O, Enter, Ctrl+X
+Run:
+* Start script manually: `screen ./continuous-deployment.sh`
+* Start after server reboot with CRON job: `nano /etc/crontab` -> add `@reboot docker /usr/bin/screen -dmS continuous-deployment-screen /home/docker/continuous-deployment.sh`
